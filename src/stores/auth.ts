@@ -1,79 +1,110 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-interface User {
-  id: number
-  name: string
-  email: string
-}
+axios.defaults.baseURL = 'http://localhost:4200/api'
 
-interface Token {
-  accessToken: string
-  refreshToken: string
+const ACCESS_TOKEN_KEY = 'accessToken'
+
+interface AuthState {
+  token: string
+  errors: string
+  username: string
+  role: string
 }
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    user: null as User | null, // данные пользователя
-    token: null as Token | null // данные токена
+  state: (): AuthState => ({
+    token: '' as string,
+    errors: '' as string,
+    username: ('' as string) || (localStorage.getItem('username') as string),
+    role: ('' as string) || (localStorage.getItem('role') as string)
   }),
   getters: {
     isAuthenticated(): boolean {
-      return !!this.user && !!this.token
+      const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY) as string
+      return accessToken !== '' && accessToken !== null
+    },
+    getToken(): boolean {
+      return this.token !== '' && this.token !== null
     }
   },
   actions: {
-    async login(email: string, password: string) {
+    async signup(username: string, email: string, password: string) {
       try {
-        const response = await axios.post('/api/auth/login', {
+        const { data } = await axios.post('/auth/signup', {
+          username,
           email,
           password
         })
-        const { user, token } = response.data
-        this.user = user
-        this.token = token
-        return { success: true }
+        return data.message
       } catch (error: any) {
-        return { success: false, message: error.message }
+        const data = error?.response?.data
+        if (data.message) {
+          return (this.errors = data.message)
+        } else if (data.length > 0) {
+          return (this.errors = data[0].msg)
+        }
       }
     },
-    async logout() {
+    async signin(username: string, password: string) {
       try {
-        await axios.post('/api/auth/logout', {
-          token: this.token?.refreshToken
+        const { data } = await axios.post('/auth/signin', {
+          username,
+          password
         })
-        this.user = null
-        this.token = null
-        return { success: true }
+        const { token, accessToken, role } = data
+        if (!token || !accessToken) {
+          this.errors = data.message
+          return
+        }
+        this.token = token
+        localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
+        localStorage.setItem('username', username)
+        localStorage.setItem('role', role)
+        this.username = username
+        this.role = role
       } catch (error: any) {
-        return { success: false, message: error.message }
+        this.errors = error.response.data
+      }
+    },
+    async signout() {
+      try {
+        await axios.post('/auth/signout', {
+          token: localStorage.getItem(ACCESS_TOKEN_KEY)
+        })
+      } catch (error: any) {
+        this.errors = error.response.data
+      } finally {
+        this.clearToken()
       }
     },
     async refresh() {
       try {
-        const response = await axios.post('/api/auth/refresh', {
-          token: this.token?.refreshToken
+        const { data } = await axios.post('/auth/refresh', {
+          refreshToken: localStorage.getItem(ACCESS_TOKEN_KEY) as string
         })
-        const { token } = response.data
-        this.token = token
-        return { success: true }
+        this.token = data.token
       } catch (error: any) {
-        return { success: false, message: error.message }
+        const errorMessage = error?.response?.data?.message
+        if (
+          errorMessage === 'Refresh token expired' ||
+          errorMessage === 'Something went wrong' ||
+          errorMessage === 'User not found'
+        ) {
+          this.errors = errorMessage
+          this.clearToken()
+        } else {
+          this.errors = errorMessage
+        }
       }
     },
-    async verify() {
-      try {
-        const response = await axios.get('/api/auth/verify', {
-          headers: {
-            Authorization: `Bearer ${this.token?.accessToken}`
-          }
-        })
-        const { user } = response.data
-        this.user = user
-        return { success: true }
-      } catch (error: any) {
-        return { success: false, message: error.message }
-      }
+    clearToken() {
+      this.token = ''
+      this.username = ''
+      this.role = ''
+      localStorage.removeItem(ACCESS_TOKEN_KEY)
+      localStorage.removeItem('username')
+      localStorage.removeItem('role')
     }
   }
 })
