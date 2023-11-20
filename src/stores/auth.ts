@@ -31,12 +31,12 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async signup(username: string, email: string, password: string) {
       try {
-        const { data } = await axios.post('/auth/signup', {
+        await axios.post('/auth/signup', {
           username,
           email,
           password
         })
-        return data.message
+        return window.location.reload()
       } catch (error: any) {
         const data = error?.response?.data
         if (data.message) {
@@ -63,6 +63,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.setItem('role', role)
         this.username = username
         this.role = role
+        return window.location.reload()
       } catch (error: any) {
         this.errors = error.response.data
       }
@@ -72,6 +73,7 @@ export const useAuthStore = defineStore('auth', {
         await axios.post('/auth/signout', {
           token: localStorage.getItem(ACCESS_TOKEN_KEY)
         })
+        return window.location.reload()
       } catch (error: any) {
         this.errors = error.response.data
       } finally {

@@ -6,7 +6,7 @@
         <p class="text-3xl font-bold text-zinc-800 dark:text-zinc-200">Page not found</p>
       </div>
       <div class="text-center">
-        <router-link to="/" class="text-3xl font-bold text-zinc-800 dark:text-zinc-200 hover:underline dark:hover:text-white"
+        <router-link to="/" class="animate-pulse text-3xl font-bold text-zinc-800 dark:text-zinc-200 hover:underline dark:hover:text-white"
           >Go Home</router-link
         >
       </div>

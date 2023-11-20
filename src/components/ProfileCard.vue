@@ -5,20 +5,26 @@
     <div class="flex flex-col w-full flex-1">
       <div class="w-full overflow-hidden">
         <img
+          v-if="user?.bannerUrl"
           alt="banner"
           class="md:aspect-[21/6] aspect-[9/3] object-cover w-full h-full"
           :src="user?.bannerUrl"
         />
+        <div v-else class="md:aspect-[21/6] aspect-[9/3] object-cover w-full h-full bg-zinc-200 dark:bg-zinc-700"></div>
       </div>
       <div class="flex flex-col md:flex-row items-center pb-5 md:px-5 dark:bg-zinc-800 bg-white">
         <div
-          class="md:w-48 md:h-48 w-32 h-32 md:-mt-24 -mt-[4.2rem] rounded-full overflow-hidden border-2 dark:border-zinc-700 border-zinc-200"
+          class="md:w-48 md:h-48 w-32 h-32 md:-mt-24 -mt-[4.2rem] rounded-full overflow-hidden border-2 dark:border-zinc-700 border-zinc-200 bg-white dark:bg-zinc-800"
         >
           <img
+            v-if="user?.avatarUrl"
             alt="Logo"
-            class="rounded-full object-cover bg-white dark:bg-zinc-800"
+            class="rounded-full object-cover"
             :src="user?.avatarUrl"
           />
+          <div v-else class="rounded-full flex h-full items-center justify-center">
+            <span class="text-5xl font-bold">{{ user?.name ? user?.name[0] : '' }}{{ user?.username[0] }}</span>
+          </div>
         </div>
         <div class="flex flex-row md:pl-5 flex-1">
           <div>
@@ -29,9 +35,10 @@
             <div class="text-gray-500 justify-self-center md:justify-self-start dark:text-gray-300">
               <p class="line-clamp-1">{{ user?.bio }}</p>
             </div>
-            <div class="flex justify-center md:justify-start space-x-3 mt-2">
+            <div class="flex justify-center md:justify-start space-x-3 mt-2" v-if="user?.githubLink !== '' || user?.twitterLink !== ''">
               <a
-                href="https://twitter.com/Alex72217559487"
+                v-if="user?.twitterLink !== null && user?.twitterLink !== ''"
+                :href="user?.twitterLink"
                 class="icon"
                 rel="noopener noreferrer"
                 target="_blank"
@@ -42,7 +49,8 @@
               </a>
 
               <a
-                href="https://github.com/Rasofex"
+                v-if="user?.githubLink !== null && user?.githubLink !== ''"
+                :href="user?.githubLink"
                 class="icon"
                 rel="noopener noreferrer"
                 target="_blank"

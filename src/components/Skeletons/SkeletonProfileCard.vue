@@ -12,7 +12,7 @@
         </div>
         <div class="flex flex-row md:pl-5 flex-1">
           <div>
-            <div class="flex text-2xl font-bold mt-2 md:mt-3.5 justify-center md:justify-start">
+            <div class="flex text-2xl font-bold mt-2 md:mt-3.5 justify-center md:justify-start mb-2">
               <div class="w-32 h-8 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded-lg"></div>
               <div class="w-24 h-8 bg-zinc-200 dark:bg-zinc-700 animate-pulse ml-2 rounded-lg"></div>
             </div>
