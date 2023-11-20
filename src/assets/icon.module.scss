@@ -1,4 +1,4 @@
 .icon {
-  @apply text-gray-400 hover:text-black dark:hover:text-white cursor-pointer;
+  @apply text-gray-400 hover:text-black dark:hover:text-white cursor-pointer transition-colors duration-150;
 }
 

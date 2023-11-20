@@ -49,7 +49,7 @@
             Don't have an account?
             <span
               class="text-black hover:underline cursor-pointer dark:text-white font-semibold"
-              @click="$router.push('/signup')"
+              @click="$router.push({ name: 'signup' })"
               >Sign Up here</span
             >
           </p>

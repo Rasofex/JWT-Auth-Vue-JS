@@ -60,7 +60,7 @@
             Already have an account?
             <span
               class="text-black hover:underline cursor-pointer dark:text-white font-semibold"
-              @click="$router.push('/signin')"
+              @click="$router.push({ name: 'signin' })"
               >Login here</span
             >
           </p>
