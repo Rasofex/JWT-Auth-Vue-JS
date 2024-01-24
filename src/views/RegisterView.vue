@@ -88,7 +88,9 @@ const signup = async () => {
   error.value = ''
   authStore.errors = ''
   await authStore.signup(username.value, email.value, password.value)
-  if (authStore.errors) {
+  if (!authStore.errors) {
+    router.push({ path: '/signin' })
+  } else {
     error.value = authStore.errors
   } else {
     router.push({ path: '/signin' })
