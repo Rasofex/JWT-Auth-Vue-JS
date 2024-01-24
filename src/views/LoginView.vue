@@ -75,9 +75,8 @@ const error = ref('')
 const login = async () => {
   error.value = ''
   authStore.errors = ''
-  const accessToken = localStorage.getItem('accessToken') as string
   await authStore.signin(username.value, password.value)
-  if (authStore.token && accessToken) {
+  if (!authStore.errors) {
     router.push({ name: 'home' })
   } else {
     error.value = authStore.errors
