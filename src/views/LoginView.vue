@@ -1,4 +1,8 @@
 <template>
+/**
+ * This file contains the LoginView component.
+ * It provides a form for user login and error message display.
+ */
   <div class="flex h-full">
     <div class="w-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
       <div class="max-w-md w-full">
@@ -72,6 +76,10 @@ const username = ref('')
 const password = ref('')
 const error = ref('')
 
+/**
+ * This function performs a user login operation.
+ * @returns {Promise<void>} - A promise that resolves when the login is successful.
+ */
 const login = async () => {
   error.value = ''
   authStore.errors = ''

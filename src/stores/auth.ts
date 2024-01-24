@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, DefineStore } from 'pinia'
 import axios from 'axios'
 
 axios.defaults.baseURL = 'http://localhost:4200/api'
@@ -13,6 +13,11 @@ interface ErrorResponse {
   [key: string]: any;
 }
 
+/**
+ * This file contains the auth store for managing user authentication.
+ * It provides functions for user signup, signin, signout, and token refresh.
+ */
+
 interface AuthState {
   token: string
   errors: string
@@ -20,7 +25,7 @@ interface AuthState {
   role: string
 }
 
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore: DefineStore<'auth', AuthState> = defineStore('auth', {
   state: (): AuthState => ({
     token: '' as string,
     errors: '' as string,
@@ -37,6 +42,12 @@ export const useAuthStore = defineStore('auth', {
     }
   },
   actions: {
+        /**
+     * This function performs a user signup operation.
+     * @param {string} username - The username of the user.
+     * @param {string} email - The email of the user.
+     * @param {string} password - The password of the user.
+     */
     async signup(username: string, email: string, password: string) {
       try {
         await axios.post('/auth/signup', {
@@ -54,6 +65,11 @@ export const useAuthStore = defineStore('auth', {
         }
       }
     },
+        /**
+     * This function performs a user signin operation.
+     * @param {string} username - The username of the user.
+     * @param {string} password - The password of the user.
+     */
     async signin(username: string, password: string) {
       try {
         const { data } = await axios.post('/auth/signin', {
@@ -76,6 +92,9 @@ export const useAuthStore = defineStore('auth', {
         this.errors = error.response.data
       }
     },
+        /**
+     * This function performs a user signout operation.
+     */
     async signout() {
       const router = useRouter();
       try {
@@ -89,6 +108,9 @@ export const useAuthStore = defineStore('auth', {
         this.clearToken()
       }
     },
+        /**
+     * This function performs a token refresh operation.
+     */
     async refresh() {
       try {
         const { data } = await axios.post('/auth/refresh', {
