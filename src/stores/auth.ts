@@ -5,6 +5,14 @@ axios.defaults.baseURL = 'http://localhost:4200/api'
 
 const ACCESS_TOKEN_KEY = 'accessToken'
 
+import { AxiosError } from 'axios';
+
+interface ErrorResponse {
+  message: string;
+  errors?: string[];
+  [key: string]: any;
+}
+
 interface AuthState {
   token: string
   errors: string
@@ -24,8 +32,8 @@ export const useAuthStore = defineStore('auth', {
       const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY) as string
       return accessToken !== '' && accessToken !== null
     },
-    getToken(): boolean {
-      return this.token !== '' && this.token !== null
+    getToken(): string {
+      return this.token
     }
   },
   actions: {
@@ -36,8 +44,8 @@ export const useAuthStore = defineStore('auth', {
           email,
           password
         })
-        return window.location.reload()
-      } catch (error: any) {
+        return this.$router.push({ name: 'Home' })
+      } catch (error: AxiosError<ErrorResponse>) {
         const data = error?.response?.data
         if (data.message) {
           return (this.errors = data.message)
@@ -63,18 +71,19 @@ export const useAuthStore = defineStore('auth', {
         localStorage.setItem('role', role)
         this.username = username
         this.role = role
-        return window.location.reload()
-      } catch (error: any) {
+        return this.$router.push({ name: 'Home' })
+      } catch (error: AxiosError<ErrorResponse>) {
         this.errors = error.response.data
       }
     },
     async signout() {
+      const router = useRouter();
       try {
         await axios.post('/auth/signout', {
           token: localStorage.getItem(ACCESS_TOKEN_KEY)
         })
-        return window.location.reload()
-      } catch (error: any) {
+        router.push({ name: 'Login' })
+      } catch (error: AxiosError<ErrorResponse>) {
         this.errors = error.response.data
       } finally {
         this.clearToken()
@@ -86,7 +95,7 @@ export const useAuthStore = defineStore('auth', {
           refreshToken: localStorage.getItem(ACCESS_TOKEN_KEY) as string
         })
         this.token = data.token
-      } catch (error: any) {
+      } catch (error: AxiosError<ErrorResponse>) {
         const errorMessage = error?.response?.data?.message
         if (
           errorMessage === 'Refresh token expired' ||
@@ -101,7 +110,7 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     clearToken() {
-      this.token = ''
+      this.token = ''; this.errors = ''
       this.username = ''
       this.role = ''
       localStorage.removeItem(ACCESS_TOKEN_KEY)
