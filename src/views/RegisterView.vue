@@ -1,4 +1,8 @@
 <template>
+/**
+ * This file contains the LoginView component.
+ * It provides a form for user registration and error message display.
+ */
   <div class="flex h-full">
     <div class="w-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
       <div class="max-w-md w-full">
@@ -85,6 +89,11 @@ const password = ref('')
 const error = ref('')
 
 const signup = async () => {
+  /**
+   * This function performs a user registration operation.
+   * @returns {Promise<void>} - A promise that resolves when the registration is successful.
+   */
+  
   error.value = ''
   authStore.errors = ''
   await authStore.signup(username.value, email.value, password.value)
